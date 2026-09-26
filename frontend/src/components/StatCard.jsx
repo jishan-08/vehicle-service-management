@@ -1,0 +1,3 @@
+export default function StatCard({ label, value, detail, icon: Icon, tone = 'amber', planned = false }) {
+  return <article className={`stat-card tone-${tone} ${planned ? 'is-planned' : ''}`}><div className="stat-top"><span className="stat-icon"><Icon size={18} /></span>{planned && <span className="planned-pill">Planned</span>}</div><div className="stat-value">{value}</div><div className="stat-label">{label}</div><p>{detail}</p></article>
+}

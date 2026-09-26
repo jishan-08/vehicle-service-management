@@ -1,0 +1,1 @@
+export const roleHome = (role) => (role === 'ADMIN' ? '/admin' : role === 'STAFF' ? '/staff' : '/customer')
