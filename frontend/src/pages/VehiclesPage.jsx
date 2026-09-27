@@ -1,22 +1,328 @@
 import { useEffect, useState } from 'react'
 import { CarFront, Edit3, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
-import { getApiMessage } from '../services/api'
-import { createVehicle, deleteVehicle, listVehicles, updateVehicle } from '../services/vehicleService'
+import { getApiMessage } from '../utils/error'
+import { formatDate } from '../utils/formatters'
+import {
+  createVehicle,
+  deleteVehicle,
+  listVehicles,
+  updateVehicle,
+} from '../services/vehicleService'
 import Modal from '../components/Modal'
 
-const blankVehicle = { registrationNumber: '', make: '', model: '', year: new Date().getFullYear(), fuelType: 'PETROL', vehicleType: 'CAR' }
+const blankVehicle = {
+  registrationNumber: '',
+  make: '',
+  model: '',
+  year: new Date().getFullYear(),
+  fuelType: 'PETROL',
+  vehicleType: 'CAR',
+}
 
 export default function VehiclesPage() {
-  const { user } = useAuth(); const [vehicles, setVehicles] = useState([]); const [query, setQuery] = useState(''); const [loading, setLoading] = useState(true); const [error, setError] = useState(''); const [modal, setModal] = useState(null)
-  useEffect(() => { let active = true; listVehicles().then((response) => { if (active) setVehicles(response.data.data.vehicles) }).catch((requestError) => { if (active) setError(getApiMessage(requestError)) }).finally(() => { if (active) setLoading(false) }); return () => { active = false } }, [])
-  const filtered = vehicles.filter((vehicle) => `${vehicle.registrationNumber} ${vehicle.make} ${vehicle.model}`.toLowerCase().includes(query.toLowerCase()))
-  const remove = async (vehicle) => { if (!window.confirm(`Remove ${vehicle.registrationNumber} from your vehicles?`)) return; try { await deleteVehicle(vehicle.id); setVehicles((items) => items.filter((item) => item.id !== vehicle.id)) } catch (requestError) { setError(getApiMessage(requestError)) } }
-  return <div className="content-page"><section className="page-heading"><div><span className="eyebrow">Garage registry</span><h1>Vehicles</h1><p>Every vehicle has a clear service story.</p></div>{user.role === 'CUSTOMER' && <button className="primary-button" onClick={() => setModal({ vehicle: blankVehicle, editing: false })}><Plus size={17} /> Add vehicle</button>}</section>{error && <div className="alert error-alert">{error}</div>}<section className="toolbar surface"><div className="search-field"><Search size={17} /><input placeholder="Search registration, make or model" value={query} onChange={(event) => setQuery(event.target.value)} /></div><span className="result-count">{vehicles.length} registered</span></section><section className="surface table-surface"><div className="table-header"><div><span className="eyebrow">Fleet overview</span><h2>Registered vehicles</h2></div><button className="icon-button" aria-label="More vehicle options"><MoreHorizontal size={20} /></button></div>{loading ? <div className="loading-state"><span className="spinner" /> Loading vehicles</div> : filtered.length === 0 ? <div className="empty-state"><div className="empty-icon"><CarFront size={23} /></div><strong>{query ? 'No vehicles match that search.' : 'Your garage is ready for its first vehicle.'}</strong><span>{query ? 'Try a different registration or model.' : 'Add a vehicle to start tracking its service history.'}</span></div> : <div className="table-scroll"><table><thead><tr><th>Vehicle</th><th>Registration</th><th>Year</th><th>Fuel</th><th>Added</th><th /></tr></thead><tbody>{filtered.map((vehicle) => <tr key={vehicle.id}><td><div className="vehicle-cell"><span className="vehicle-avatar"><CarFront size={17} /></span><span><strong>{vehicle.make} {vehicle.model}</strong><small>{vehicle.vehicleType}</small></span></div></td><td><span className="registration-tag">{vehicle.registrationNumber}</span></td><td>{vehicle.year}</td><td className="muted-cell">{vehicle.fuelType}</td><td className="muted-cell">{new Date(vehicle.createdAt).toLocaleDateString()}</td><td><div className="row-actions">{user.role === 'CUSTOMER' && <><button className="icon-button" onClick={() => setModal({ vehicle, editing: true })} aria-label={`Edit ${vehicle.registrationNumber}`}><Edit3 size={16} /></button><button className="icon-button danger-icon" onClick={() => remove(vehicle)} aria-label={`Delete ${vehicle.registrationNumber}`}><Trash2 size={16} /></button></>}</div></td></tr>)}</tbody></table></div>}</section>{modal && <VehicleModal initial={modal.vehicle} editing={modal.editing} onClose={() => setModal(null)} onSaved={(vehicle) => { setVehicles((items) => modal.editing ? items.map((item) => item.id === vehicle.id ? vehicle : item) : [vehicle, ...items]); setModal(null) }} />}</div>
+  const { user } = useAuth()
+  const [vehicles, setVehicles] = useState([])
+  const [query, setQuery] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [modal, setModal] = useState(null)
+
+  useEffect(() => {
+    let active = true
+
+    listVehicles()
+      .then((response) => {
+        if (active) setVehicles(response.data.data.vehicles)
+      })
+      .catch((requestError) => {
+        if (active) setError(getApiMessage(requestError))
+      })
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const filtered = vehicles.filter((vehicle) =>
+    `${vehicle.registrationNumber} ${vehicle.make} ${vehicle.model}`
+      .toLowerCase()
+      .includes(query.toLowerCase())
+  )
+
+  const remove = async (vehicle) => {
+    if (!window.confirm(`Remove ${vehicle.registrationNumber} from your vehicles?`)) return
+    try {
+      await deleteVehicle(vehicle.id)
+      setVehicles((items) => items.filter((item) => item.id !== vehicle.id))
+    } catch (requestError) {
+      setError(getApiMessage(requestError))
+    }
+  }
+
+  return (
+    <div className="content-page">
+      <section className="page-heading">
+        <div>
+          <span className="eyebrow">Garage registry</span>
+          <h1>Vehicles</h1>
+          <p>Every vehicle has a clear service story.</p>
+        </div>
+        {user.role === 'CUSTOMER' && (
+          <button
+            type="button"
+            className="primary-button"
+            onClick={() => setModal({ vehicle: blankVehicle, editing: false })}
+          >
+            <Plus size={17} aria-hidden="true" /> Add vehicle
+          </button>
+        )}
+      </section>
+
+      {error && <div className="alert error-alert" role="alert">{error}</div>}
+
+      <section className="toolbar surface">
+        <div className="search-field">
+          <Search size={17} aria-hidden="true" />
+          <input
+            placeholder="Search registration, make or model"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </div>
+        <span className="result-count">{vehicles.length} registered</span>
+      </section>
+
+      <section className="surface table-surface">
+        <div className="table-header">
+          <div>
+            <span className="eyebrow">Fleet overview</span>
+            <h2>Registered vehicles</h2>
+          </div>
+          <button type="button" className="icon-button" aria-label="More vehicle options">
+            <MoreHorizontal size={20} aria-hidden="true" />
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="loading-state">
+            <span className="spinner" aria-hidden="true" /> Loading vehicles
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-icon">
+              <CarFront size={23} aria-hidden="true" />
+            </div>
+            <strong>
+              {query
+                ? 'No vehicles match that search.'
+                : 'Your garage is ready for its first vehicle.'}
+            </strong>
+            <span>
+              {query
+                ? 'Try a different registration or model.'
+                : 'Add a vehicle to start tracking its service history.'}
+            </span>
+          </div>
+        ) : (
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Vehicle</th>
+                  <th scope="col">Registration</th>
+                  <th scope="col">Year</th>
+                  <th scope="col">Fuel</th>
+                  <th scope="col">Added</th>
+                  <th scope="col"><span className="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((vehicle) => (
+                  <tr key={vehicle.id}>
+                    <td>
+                      <div className="vehicle-cell">
+                        <span className="vehicle-avatar" aria-hidden="true">
+                          <CarFront size={17} />
+                        </span>
+                        <span>
+                          <strong>{vehicle.make} {vehicle.model}</strong>
+                          <small>{vehicle.vehicleType}</small>
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="registration-tag">{vehicle.registrationNumber}</span>
+                    </td>
+                    <td>{vehicle.year}</td>
+                    <td className="muted-cell">{vehicle.fuelType}</td>
+                    <td className="muted-cell">{formatDate(vehicle.createdAt)}</td>
+                    <td>
+                      <div className="row-actions">
+                        {user.role === 'CUSTOMER' && (
+                          <>
+                            <button
+                              type="button"
+                              className="icon-button"
+                              onClick={() => setModal({ vehicle, editing: true })}
+                              aria-label={`Edit ${vehicle.registrationNumber}`}
+                            >
+                              <Edit3 size={16} aria-hidden="true" />
+                            </button>
+                            <button
+                              type="button"
+                              className="icon-button danger-icon"
+                              onClick={() => remove(vehicle)}
+                              aria-label={`Delete ${vehicle.registrationNumber}`}
+                            >
+                              <Trash2 size={16} aria-hidden="true" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      {modal && (
+        <VehicleModal
+          initial={modal.vehicle}
+          editing={modal.editing}
+          onClose={() => setModal(null)}
+          onSaved={(vehicle) => {
+            setVehicles((items) =>
+              modal.editing
+                ? items.map((item) => (item.id === vehicle.id ? vehicle : item))
+                : [vehicle, ...items]
+            )
+            setModal(null)
+          }}
+        />
+      )}
+    </div>
+  )
 }
 
 function VehicleModal({ initial, editing, onClose, onSaved }) {
-  const [form, setForm] = useState(initial); const [error, setError] = useState(''); const [saving, setSaving] = useState(false); const update = (key, value) => setForm((current) => ({ ...current, [key]: value }))
-  const submit = async (event) => { event.preventDefault(); setSaving(true); setError(''); try { const response = editing ? await updateVehicle(initial.id, form) : await createVehicle(form); onSaved(response.data.data.vehicle) } catch (requestError) { setError(getApiMessage(requestError)) } finally { setSaving(false) } }
-  return <Modal title={editing ? 'Edit vehicle' : 'Add a vehicle'} description="Keep the essentials accurate for every service visit." onClose={onClose}><form className="modal-form" onSubmit={submit}>{error && <div className="alert error-alert">{error}</div>}<div className="field-grid"><label>Registration number<input value={form.registrationNumber} onChange={(event) => update('registrationNumber', event.target.value)} placeholder="VNT 2048" required /></label><label>Year<input type="number" value={form.year} onChange={(event) => update('year', Number(event.target.value))} min="1886" max={new Date().getFullYear() + 1} required /></label><label>Make<input value={form.make} onChange={(event) => update('make', event.target.value)} placeholder="Toyota" required /></label><label>Model<input value={form.model} onChange={(event) => update('model', event.target.value)} placeholder="Corolla" required /></label><label>Fuel type<select value={form.fuelType} onChange={(event) => update('fuelType', event.target.value)}><option>PETROL</option><option>DIESEL</option><option>ELECTRIC</option><option>HYBRID</option><option>CNG</option><option>LPG</option></select></label><label>Vehicle type<select value={form.vehicleType} onChange={(event) => update('vehicleType', event.target.value)}><option>CAR</option><option>MOTORCYCLE</option><option>TRUCK</option><option>VAN</option><option>SUV</option><option>BUS</option><option>OTHER</option></select></label></div><div className="modal-actions"><button type="button" className="secondary-button" onClick={onClose}>Cancel</button><button className="primary-button" disabled={saving}>{saving ? 'Saving...' : editing ? 'Save changes' : 'Add vehicle'}</button></div></form></Modal>
+  const [form, setForm] = useState(initial)
+  const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const update = (key, value) =>
+    setForm((current) => ({ ...current, [key]: value }))
+
+  const submit = async (event) => {
+    event.preventDefault()
+    setSaving(true)
+    setError('')
+    try {
+      const response = editing
+        ? await updateVehicle(initial.id, form)
+        : await createVehicle(form)
+      onSaved(response.data.data.vehicle)
+    } catch (requestError) {
+      setError(getApiMessage(requestError))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <Modal
+      title={editing ? 'Edit vehicle' : 'Add a vehicle'}
+      description="Keep the essentials accurate for every service visit."
+      onClose={onClose}
+    >
+      <form className="modal-form" onSubmit={submit}>
+        {error && <div className="alert error-alert" role="alert">{error}</div>}
+
+        <div className="field-grid">
+          <label>
+            Registration number
+            <input
+              value={form.registrationNumber}
+              onChange={(event) => update('registrationNumber', event.target.value)}
+              placeholder="VNT 2048"
+              required
+            />
+          </label>
+          <label>
+            Year
+            <input
+              type="number"
+              value={form.year}
+              onChange={(event) => update('year', Number(event.target.value))}
+              min="1886"
+              max={new Date().getFullYear() + 1}
+              required
+            />
+          </label>
+          <label>
+            Make
+            <input
+              value={form.make}
+              onChange={(event) => update('make', event.target.value)}
+              placeholder="Toyota"
+              required
+            />
+          </label>
+          <label>
+            Model
+            <input
+              value={form.model}
+              onChange={(event) => update('model', event.target.value)}
+              placeholder="Corolla"
+              required
+            />
+          </label>
+          <label>
+            Fuel type
+            <select
+              value={form.fuelType}
+              onChange={(event) => update('fuelType', event.target.value)}
+            >
+              <option value="PETROL">PETROL</option>
+              <option value="DIESEL">DIESEL</option>
+              <option value="ELECTRIC">ELECTRIC</option>
+              <option value="HYBRID">HYBRID</option>
+              <option value="CNG">CNG</option>
+              <option value="LPG">LPG</option>
+            </select>
+          </label>
+          <label>
+            Vehicle type
+            <select
+              value={form.vehicleType}
+              onChange={(event) => update('vehicleType', event.target.value)}
+            >
+              <option value="CAR">CAR</option>
+              <option value="MOTORCYCLE">MOTORCYCLE</option>
+              <option value="TRUCK">TRUCK</option>
+              <option value="VAN">VAN</option>
+              <option value="SUV">SUV</option>
+              <option value="BUS">BUS</option>
+              <option value="OTHER">OTHER</option>
+            </select>
+          </label>
+        </div>
+
+        <div className="modal-actions">
+          <button type="button" className="secondary-button" onClick={onClose}>
+            Cancel
+          </button>
+          <button type="submit" className="primary-button" disabled={saving}>
+            {saving ? 'Saving...' : editing ? 'Save changes' : 'Add vehicle'}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  )
 }

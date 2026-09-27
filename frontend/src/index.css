@@ -8,20 +8,120 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 
-  /* Color identity */
-  --ink: #202a31;
-  --muted: #728087;
-  --line: #dce4e7;
+  /* Color Palette - Navy / Amber / Teal / Coral / Slate / Paper */
+  --ink: #18272e;
+  --ink-secondary: #405159;
+  --muted: #6e7e85;
+  --muted-light: #94a3a8;
+  --line: #dbe3e6;
+  --line-strong: #c2cfd4;
   --paper: #ffffff;
+  --paper-subtle: #f8fafb;
+  --paper-muted: #f1f4f5;
+  --paper-elevated: #ffffff;
+
+  /* Brand Colors */
   --navy: #18272e;
-  --navy-soft: #243942;
-  --amber: #e6a43b;
-  --teal: #2d8f87;
-  --coral: #c96859;
-  --blue: #5d82a6;
-  --shadow-sm: 0 5px 16px rgba(27, 42, 49, 0.045);
-  --shadow-lg: 0 22px 60px rgba(27, 42, 49, 0.15);
+  --navy-light: #243942;
+  --navy-soft: #2c444f;
+  --navy-hover: #111d22;
+  
+  --amber: #d9822b;
+  --amber-light: #fef5ea;
+  --amber-border: #f5d4a4;
+  --amber-text: #944e05;
+
+  --teal: #1f8279;
+  --teal-light: #edf8f6;
+  --teal-border: #b1dfda;
+  --teal-text: #0f5c55;
+
+  --coral: #c94a38;
+  --coral-light: #fdf2f0;
+  --coral-border: #f8c8c2;
+  --coral-text: #8f2819;
+
+  --blue: #3b74a6;
+  --blue-light: #eff5fa;
+  --blue-border: #bcd5ea;
+  --blue-text: #1d4d77;
+
+  --green: #2a8a58;
+  --green-light: #edf8f2;
+  --green-border: #b3e3ca;
+  --green-text: #145934;
+
+  --gray-status: #5e7078;
+  --gray-status-light: #f0f3f4;
+  --gray-status-border: #d0d9dc;
+  --gray-status-text: #37464d;
+
+  /* Typography */
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-xl: 1.25rem;     /* 20px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 1.875rem;   /* 30px */
+  --text-4xl: 2.25rem;    /* 36px */
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+
+  /* 8px Spacing System */
+  --space-0-5: 0.25rem; /* 4px */
+  --space-1: 0.5rem;    /* 8px */
+  --space-1-5: 0.75rem; /* 12px */
+  --space-2: 1rem;      /* 16px */
+  --space-2-5: 1.25rem; /* 20px */
+  --space-3: 1.5rem;    /* 24px */
+  --space-4: 2rem;      /* 32px */
+  --space-5: 2.5rem;    /* 40px */
+  --space-6: 3rem;      /* 48px */
+  --space-8: 4rem;      /* 64px */
+
+  /* Border Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
   --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Elevation Shadows */
+  --shadow-xs: 0 1px 2px rgba(24, 39, 46, 0.04);
+  --shadow-sm: 0 4px 12px rgba(24, 39, 46, 0.05);
+  --shadow-md: 0 8px 24px rgba(24, 39, 46, 0.08);
+  --shadow-lg: 0 18px 48px rgba(24, 39, 46, 0.12);
+  --shadow-modal: 0 24px 64px rgba(17, 29, 34, 0.22);
+  --shadow-focus: 0 0 0 3px rgba(31, 130, 121, 0.25);
+
+  /* Control Heights */
+  --control-height-sm: 32px;
+  --control-height-md: 40px;
+  --control-height-lg: 48px;
+
+  /* Layering / Z-Index */
+  --z-base: 1;
+  --z-sticky: 10;
+  --z-header: 20;
+  --z-scrim: 30;
+  --z-drawer: 40;
+  --z-modal-backdrop: 50;
+  --z-modal: 60;
+  --z-toast: 70;
 
   /* Centralized Motion Tokens */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -29,10 +129,10 @@
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-subtle: cubic-bezier(0.25, 1, 0.5, 1);
   --duration-instant: 100ms;
-  --duration-fast: 160ms;
-  --duration-normal: 220ms;
-  --duration-moderate: 300ms;
-  --duration-slow: 400ms;
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-moderate: 280ms;
+  --duration-slow: 380ms;
 }
 
 * {
@@ -43,6 +143,11 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  background: var(--paper-muted);
+  line-height: var(--leading-normal);
 }
 
 button, input, select, textarea {
@@ -59,10 +164,11 @@ button {
 
 a {
   color: inherit;
+  text-decoration: none;
 }
 
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 3px solid rgba(45, 143, 135, 0.32);
+  outline: 3px solid rgba(31, 130, 121, 0.35);
   outline-offset: 2px;
 }
 

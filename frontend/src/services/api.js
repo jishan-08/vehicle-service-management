@@ -23,7 +23,8 @@ api.interceptors.response.use(
   },
 )
 
-export const getApiMessage = (error, fallback = 'Something went wrong. Please try again.') =>
-  error.response?.data?.message || (error.request ? 'The service is unavailable right now.' : fallback)
+import { getApiMessage } from '../utils/error'
+
+export { getApiMessage }
 
 export default api

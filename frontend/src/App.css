@@ -1918,3 +1918,198 @@ tbody tr:hover .vehicle-avatar,
     grid-template-columns: 1fr;
   }
 }
+
+/* Tablet Specific Breakpoint (761px - 1049px) */
+@media (min-width: 761px) and (max-width: 1049px) {
+  .sidebar {
+    width: 210px;
+    flex: 0 0 210px;
+    padding: 18px 10px 14px;
+  }
+  .brand-lockup {
+    padding: 0 6px 20px;
+  }
+  .topbar {
+    padding: 0 24px;
+  }
+  .page-frame {
+    padding: 24px 20px 40px;
+  }
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .report-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .service-row {
+    grid-template-columns: minmax(200px, 1.4fr) 110px minmax(130px, 0.8fr);
+    gap: 12px;
+  }
+  .appointment-details,
+  .bill-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+/* Design System Utilities & Component Classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.page-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+/* Status Tone Variants */
+.status-tone-teal {
+  color: var(--teal-text);
+  background: var(--teal-light);
+  border: 1px solid var(--teal-border);
+}
+
+.status-tone-blue {
+  color: var(--blue-text);
+  background: var(--blue-light);
+  border: 1px solid var(--blue-border);
+}
+
+.status-tone-amber {
+  color: var(--amber-text);
+  background: var(--amber-light);
+  border: 1px solid var(--amber-border);
+}
+
+.status-tone-coral {
+  color: var(--coral-text);
+  background: var(--coral-light);
+  border: 1px solid var(--coral-border);
+}
+
+.status-tone-green {
+  color: var(--green-text);
+  background: var(--green-light);
+  border: 1px solid var(--green-border);
+}
+
+.status-tone-slate {
+  color: var(--gray-status-text);
+  background: var(--gray-status-light);
+  border: 1px solid var(--gray-status-border);
+}
+
+/* Form System Classes */
+.form-field-group {
+  display: grid;
+  gap: var(--space-0-5);
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--ink-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+}
+
+.required-indicator {
+  color: var(--coral);
+  font-weight: var(--weight-bold);
+}
+
+.form-hint {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  line-height: var(--leading-tight);
+}
+
+.form-error-text {
+  color: var(--coral-text);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+}
+
+.form-field-group.has-error input,
+.form-field-group.has-error select,
+.form-field-group.has-error textarea {
+  border-color: var(--coral);
+}
+
+/* Button Component Variants */
+.danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  height: var(--control-height-md);
+  padding: 0 var(--space-2);
+  color: #ffffff;
+  background: var(--coral);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  transition: background-color var(--duration-fast) var(--ease-in-out),
+              transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.danger-button:hover:not(:disabled) {
+  background: #b53e2d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(201, 74, 56, 0.25);
+}
+
+.ghost-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  height: var(--control-height-md);
+  padding: 0 var(--space-2);
+  color: var(--ink-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  transition: color var(--duration-fast) var(--ease-in-out),
+              background-color var(--duration-fast) var(--ease-in-out);
+}
+
+.ghost-button:hover:not(:disabled) {
+  color: var(--ink);
+  background: var(--paper-subtle);
+}
+
+.button-spinner {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+}
+
+.empty-action {
+  margin-top: var(--space-1-5);
+}
+
+.confirm-dialog-body {
+  padding-top: var(--space-1);
+}
