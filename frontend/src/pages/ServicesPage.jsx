@@ -727,6 +727,12 @@ function CustomerServiceRequestModal({ vehicles, onClose, onCreated }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
+  useEffect(() => {
+    if (!vehicleId && vehicles.length > 0) {
+      setVehicleId(vehicles[0].id)
+    }
+  }, [vehicles, vehicleId])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!vehicleId) {
