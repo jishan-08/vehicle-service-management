@@ -132,8 +132,8 @@ test('staff and admin role workspaces expose permitted pages without frontend ro
 
   await login(page, users.admin)
   await expect(page.getByRole('heading', { name: 'The operation, at a glance.' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Reports' })).toBeVisible()
-  await page.getByRole('link', { name: 'Bills' }).click()
+  await expect(page.getByRole('navigation', { name: 'Main Navigation' }).getByRole('link', { name: 'Reports' })).toBeVisible()
+  await page.getByRole('navigation', { name: 'Main Navigation' }).getByRole('link', { name: 'Bills' }).click()
   await expect(page.getByRole('heading', { name: 'Bills', exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Sign out' }).click()
   await expect(page).toHaveURL(/\/login$/)
