@@ -257,20 +257,19 @@ export default function BillsPage() {
         title="Bills"
         eyebrow="Financial records"
         description="Invoices, payment status, and workshop service charges in one view."
-        actions={
-          canManage && (
-            <button
-              type="button"
-              className="primary-button"
-              onClick={() => setCreateModalOpen(true)}
-              aria-label="Create bill"
-            >
-              <Plus size={16} aria-hidden="true" />
-              <span>Create bill</span>
-            </button>
-          )
-        }
-      />
+      >
+        {canManage && (
+          <button
+            type="button"
+            className="primary-button"
+            onClick={() => setCreateModalOpen(true)}
+            aria-label="Create bill"
+          >
+            <Plus size={16} aria-hidden="true" />
+            <span>Create bill</span>
+          </button>
+        )}
+      </PageHeader>
 
       {/* Alerts */}
       {error && <Alert type="danger" message={error} onClose={() => setError('')} />}

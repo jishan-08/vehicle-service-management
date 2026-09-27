@@ -730,10 +730,20 @@ function BookAppointmentModal({ vehicles, services, onClose, onCreated }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
+  // Sync vehicleId when vehicles are provided/loaded
+  useEffect(() => {
+    if (!vehicleId && vehicles.length > 0) {
+      setVehicleId(vehicles[0].id)
+    }
+  }, [vehicles, vehicleId])
+
   // Available services for the chosen vehicle
   const availableServices = useMemo(() => {
     if (!vehicleId) return []
-    return services.filter((s) => s.vehicleId === vehicleId)
+    return services.filter((s) => {
+      const sVehId = s.vehicleId || (s.vehicle && s.vehicle.id) || s.vehicle
+      return sVehId === vehicleId
+    })
   }, [services, vehicleId])
 
   // Automatically select the first available service when vehicle changes
