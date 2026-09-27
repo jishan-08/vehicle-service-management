@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   BarChart3,
@@ -37,6 +37,17 @@ export default function AppShell() {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
 
+  // Close drawer on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && open) {
+        setOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [open])
+
   const handleLogout = () => {
     logout()
     navigate('/login')
@@ -50,7 +61,7 @@ export default function AppShell() {
   return (
     <div className="app-shell">
       {/* Sidebar Navigation */}
-      <aside className={`sidebar ${open ? 'sidebar-open' : ''}`}>
+      <aside className={`sidebar ${open ? 'sidebar-open' : ''}`} aria-label="Main Sidebar Navigation">
         <div className="brand-lockup">
           <span className="brand-emblem" aria-hidden="true">V</span>
           <span>
@@ -104,7 +115,7 @@ export default function AppShell() {
           type="button"
           className="sidebar-scrim"
           onClick={() => setOpen(false)}
-          aria-label="Close navigation"
+          aria-label="Close navigation backdrop"
         />
       )}
 
