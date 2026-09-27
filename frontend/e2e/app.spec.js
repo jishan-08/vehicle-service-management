@@ -120,8 +120,11 @@ test('customer completes vehicle, service, appointment, billing, profile, and lo
 test('staff and admin role workspaces expose permitted pages without frontend role escalation', async ({ page }) => {
   await login(page, users.staff)
   await expect(page.getByRole('heading', { name: 'Ready for the day.' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Reports' })).toBeVisible()
-  await page.getByRole('link', { name: 'Reports' }).click()
+  const reportsLink = page
+  .getByRole('navigation', { name: 'Main Navigation' })
+  .getByRole('link', { name: 'Reports' })
+  await expect(reportsLink).toBeVisible()
+  await reportsLink.click()
   await expect(page.getByRole('heading', { name: 'Reports' })).toBeVisible()
   await page.goto('/admin')
   await expect(page).toHaveURL(/\/staff$/)

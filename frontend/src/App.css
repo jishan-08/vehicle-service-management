@@ -2974,9 +2974,110 @@ tbody tr:hover .vehicle-avatar,
   line-height: var(--leading-normal);
 }
 
+.job-reference-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  background: var(--paper-muted);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  color: var(--navy);
+  letter-spacing: 0.05em;
+}
+
+.staff-assigned-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  background: var(--teal-light);
+  border: 1px solid var(--teal-border);
+  border-radius: var(--radius-xs);
+  color: var(--teal-text);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* Mobile Stepper Stage Bar */
+.service-mobile-stepper {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mobile-stepper-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.mobile-stepper-label {
+  font-weight: var(--weight-bold);
+  color: var(--ink);
+}
+
+.mobile-stepper-percent {
+  font-weight: var(--weight-bold);
+  color: var(--muted);
+  font-family: var(--font-mono, monospace);
+}
+
+.mobile-stepper-track {
+  width: 100%;
+  height: 6px;
+  background: var(--line);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.mobile-stepper-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--amber));
+  border-radius: var(--radius-full);
+  transition: width var(--duration-fast) var(--ease-out);
+}
+
+/* Service Detail Timeline List */
+.service-timeline-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 5px;
+  font-size: var(--text-xs);
+}
+
+.service-timeline-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--ink);
+}
+
+.service-timeline-list li span {
+  color: var(--muted);
+}
+
+.service-timeline-list code {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  background: var(--paper-muted);
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+}
+
 @media (max-width: 760px) {
   .service-stage-stepper {
     display: none;
+  }
+  .service-mobile-stepper {
+    display: flex;
   }
   .service-stepper-wrap {
     padding: var(--space-1) var(--space-1-5);

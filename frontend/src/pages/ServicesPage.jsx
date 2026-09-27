@@ -431,9 +431,15 @@ export default function ServicesPage() {
             const isExpanded = expandedCardIds.has(service.id)
             const nextStep = NEXT_STATUS[service.status]
             const isAdvancing = advancingServiceId === service.id
+            const jobRef = `SRV-${(service.id || '').slice(-6).toUpperCase()}`
 
             // Stepper progress index
             const currentStageIndex = WORKFLOW_STAGES.findIndex((st) => st.key === service.status)
+            const progressPercent = isCompleted
+              ? 100
+              : currentStageIndex >= 0
+              ? Math.round(((currentStageIndex + 1) / WORKFLOW_STAGES.length) * 100)
+              : 0
 
             return (
               <article
@@ -450,6 +456,7 @@ export default function ServicesPage() {
                       </div>
                       <div className="service-titles">
                         <div className="service-title-wrap">
+                          <span className="job-reference-pill">{jobRef}</span>
                           {/* Required by E2E test to match: GENERAL SERVICE, OIL CHANGE, etc. */}
                           <strong className="service-type-title">
                             {service.serviceType ? service.serviceType.replaceAll('_', ' ') : 'GENERAL SERVICE'}
@@ -469,6 +476,12 @@ export default function ServicesPage() {
                           )}
                           <span className="meta-dot" aria-hidden="true">•</span>
                           <span>Requested {formatDate(service.createdAt)}</span>
+                          {service.assignedStaffId && (
+                            <>
+                              <span className="meta-dot" aria-hidden="true">•</span>
+                              <span className="staff-assigned-tag">Tech Assigned</span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -488,10 +501,11 @@ export default function ServicesPage() {
                     <p>{service.description}</p>
                   </div>
 
-                  {/* 7-Stage Visual Stepper */}
+                  {/* Stage Progress Stepper (Desktop full track + Mobile compact bar) */}
                   {!isCancelled ? (
                     <div className="service-stepper-wrap" aria-label="Service progress timeline">
-                      <div className="service-stage-stepper">
+                      {/* Desktop 7-Stage Stepper */}
+                      <div className="service-stage-stepper" aria-hidden="true">
                         {WORKFLOW_STAGES.map((stage, idx) => {
                           const isDone = isCompleted || currentStageIndex > idx
                           const isCurrent = !isCompleted && currentStageIndex === idx
@@ -507,6 +521,24 @@ export default function ServicesPage() {
                             </div>
                           )
                         })}
+                      </div>
+
+                      {/* Mobile Stage Progression Bar */}
+                      <div className="service-mobile-stepper">
+                        <div className="mobile-stepper-header">
+                          <span className="mobile-stepper-label">
+                            {isCompleted
+                              ? 'All 7 stages complete'
+                              : `Stage ${currentStageIndex + 1} of 7: ${formatStatusLabel(service.status)}`}
+                          </span>
+                          <span className="mobile-stepper-percent">{progressPercent}%</span>
+                        </div>
+                        <div className="mobile-stepper-track">
+                          <div
+                            className="mobile-stepper-fill"
+                            style={{ width: `${progressPercent}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -541,9 +573,10 @@ export default function ServicesPage() {
                       {service.completedAt && (
                         <>
                           <span className="meta-separator" aria-hidden="true">•</span>
-                          <span className="meta-caption">
-                            Completed {formatDate(service.completedAt)}
-                          </span>
+                          <div>
+                            <span className="meta-caption">Completed</span>
+                            <strong>{formatDate(service.completedAt)}</strong>
+                          </div>
                         </>
                       )}
                     </div>
@@ -623,6 +656,18 @@ export default function ServicesPage() {
                       <p>
                         {service.serviceNotes || 'No operations log notes recorded yet.'}
                       </p>
+                    </div>
+                    <div className="service-note-card">
+                      <strong>Job details & timeline</strong>
+                      <ul className="service-timeline-list">
+                        <li><span>Job Ref:</span> <code>{jobRef}</code></li>
+                        <li><span>Submitted:</span> {formatDate(service.createdAt)}</li>
+                        <li><span>Last updated:</span> {formatDate(service.updatedAt)}</li>
+                        <li>
+                          <span>Assigned technician:</span>{' '}
+                          {service.assignedStaffId ? 'Staff assigned' : 'Workshop pool (unassigned)'}
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 )}
@@ -860,7 +905,7 @@ function EditServiceNotesModal({ service, onClose, onSave }) {
   return (
     <Modal
       title="Update service notes & pricing"
-      description={`Job #${service.id?.slice(-6) || ''} · ${service.serviceType.replaceAll('_', ' ')}`}
+      description={`Job #SRV-${(service.id || '').slice(-6).toUpperCase()} · ${service.serviceType.replaceAll('_', ' ')}`}
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="modal-form">
